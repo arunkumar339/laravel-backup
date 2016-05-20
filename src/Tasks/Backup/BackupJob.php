@@ -194,6 +194,12 @@ class BackupJob
                 $fileSize = Format::getHumanReadableSize($zip->getSize());
 
                 $fileName = pathinfo($zip->getPath(), PATHINFO_BASENAME);
+		
+                if(config("laravel-backup.backup.encrypt")==true)
+                {
+                    consoleOutput()->info("Encrypting  {$fileName} ");
+                    \File::put($zip->getPath(),\Crypt::encrypt(\File::get($zip->getPath())) );
+                }
 
                 consoleOutput()->info("Copying {$fileName} (size: {$fileSize}) to disk named {$backupDestination->getDiskName()}...");
 
@@ -210,3 +216,4 @@ class BackupJob
         });
     }
 }
+
